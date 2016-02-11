@@ -25,6 +25,17 @@ switch($choice)
 
 }
 
+#broke out the logic for searching logs rather than do it in my case statement.
+#prompts users for how many logs they want and then search terms for the logs. 
+function logSearch(){
+
+    $logCount = Read-Host -Prompt "How many logs would you like to search?"
+    $logTerm = Read-Host -Prompt "Please enter search terms seperated by comma"
+    $logTerm = ($logTerm).Replace(",","|")
+
+    Get-EventLog -Newest $logCount | where{$_.Message -match ($logTerm)}
+
+}
 
 #secondary menu for security options. 
 function secMenu() {
@@ -32,7 +43,8 @@ function secMenu() {
     Write-Host "1. Get 100 event logs"
     Write-Host "2. Get applied HotFixes"
     Write-Host "3. Get running services"
-    Write-Host "4. Return to main menu"
+    Write-Host "4. Search through event logs"
+    Write-Host "5. Return to main menu"
 
    $choice = Read-Host "Selection: "
     
@@ -42,7 +54,8 @@ switch($choice)
         1{Get-EventLog -Newest 100;break}
         2{Get-HotFix;break}
         3{Get-Service|where{$_.Status -match "running" };break}
-        4{menu;break}
+        4{logSearch;break}
+        5{menu;break}
         default {write-host "That is not an option, please try again";secMenu}
     }
 
@@ -84,6 +97,8 @@ switch($choice)
 #loops back to main menu after the choice was ran. 
 adminMenu
 }
+
+
 
 
 #calls the main menu function.
